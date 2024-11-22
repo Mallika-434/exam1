@@ -44,9 +44,15 @@ st.markdown("---")
 st.header("2. Filter Dataset")
 columns = df.columns.tolist()
 
-# Sliding option for selecting the number of columns
-num_columns = st.slider("Select the number of columns to view", min_value=1, max_value=len(columns), value=5)
-selected_columns = st.multiselect("Select Columns to View", columns[:num_columns], default=columns[:num_columns])
+# Sliding option to set the number of columns to view
+num_columns = st.slider("Set the maximum number of columns to view", min_value=1, max_value=len(columns), value=5)
+
+# Multi-select with restriction
+selected_columns = st.multiselect("Select Columns to View (Max: {} columns)".format(num_columns), columns)
+if len(selected_columns) > num_columns:
+    st.warning(f"You can only select up to {num_columns} columns. Excess columns will not be included.")
+    selected_columns = selected_columns[:num_columns]
+
 filtered_df = df[selected_columns]
 st.write("Filtered Data Preview:")
 st.dataframe(filtered_df)
