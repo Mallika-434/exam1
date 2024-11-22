@@ -9,7 +9,6 @@ st.sidebar.header("Controls")
 
 # Title and App Info
 st.title("Automobile Data Explorer")
-#st.image("https://your-image-url.com/banner.png", use_column_width=True)
 st.write("This app allows you to explore and visualize the Automobile dataset interactively.")
 
 # Load Dataset
@@ -46,16 +45,16 @@ st.markdown("---")
 st.header("Custom Data Selection")
 columns = df.columns.tolist()
 
-# Sliding option to set the number of columns to view
+# Sliding option to set the maximum number of columns to view
 num_columns = st.slider("Set the maximum number of columns to view", min_value=1, max_value=len(columns), value=5)
 
 # Multi-select with restriction
 selected_columns = st.multiselect("Select Columns to View (Max: {} columns)".format(num_columns), columns)
 
-# Warning for excess columns
+# Logic to restrict column selection
 if len(selected_columns) > num_columns:
-    st.warning(f"You can only select up to {num_columns} columns. Excess columns will not be included.")
-    selected_columns = selected_columns[:num_columns]  # Truncate the selection
+    st.warning(f"You can only select up to {num_columns} columns. Extra columns will not be added.")
+    selected_columns = selected_columns[:num_columns]  # Truncate to allowed columns
 
 # Display Filtered Data
 st.write("Filtered Data Preview:")
@@ -118,6 +117,19 @@ if st.checkbox("Generate Boxplot"):
     fig, ax = plt.subplots()
     sns.boxplot(x=feature_to_analyze, y='price', data=df, color=box_color, ax=ax)
     plt.xticks(rotation=90)
+    st.pyplot(fig)
+
+# Pie Chart
+st.markdown("---")
+st.header("Visualize Distributions: Pie Chart")
+categorical_columns = df.select_dtypes(include=['object']).columns.tolist()
+
+selected_category = st.selectbox("Select Categorical Column for Pie Chart", categorical_columns)
+if st.button("Generate Pie Chart"):
+    category_counts = df[selected_category].value_counts()
+    fig, ax = plt.subplots()
+    ax.pie(category_counts, labels=category_counts.index, autopct='%1.1f%%', startangle=90, colors=sns.color_palette("pastel"))
+    ax.set_title(f"Distribution of {selected_category}")
     st.pyplot(fig)
 
 # Grouping and Aggregation
