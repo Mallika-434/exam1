@@ -1,24 +1,15 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy import stats
-
-# Theme Customization: Adjust via ~/.streamlit/config.toml
-# Example:
-# [theme]
-# primaryColor = "#6C63FF"
-# backgroundColor = "#F5F5F5"
-# secondaryBackgroundColor = "#FFFFFF"
-# textColor = "#333333"
 
 # Sidebar for configuration
 st.sidebar.header("Controls")
 
 # Title and App Info
 st.title("Interactive EDA App - Automobile Dataset")
-#st.image("https://your-image-url.com/banner.png", use_column_width=True)
+st.image("https://your-image-url.com/banner.png", use_column_width=True)
 st.write("This app allows you to explore and visualize the Automobile dataset interactively.")
 
 # Load Dataset
@@ -52,7 +43,10 @@ if st.checkbox("Show Dataset Overview"):
 st.markdown("---")
 st.header("2. Filter Dataset")
 columns = df.columns.tolist()
-selected_columns = st.sidebar.multiselect("Select Columns to View", columns, default=columns[:5])
+
+# Sliding option for selecting the number of columns
+num_columns = st.slider("Select the number of columns to view", min_value=1, max_value=len(columns), value=5)
+selected_columns = st.multiselect("Select Columns to View", columns[:num_columns], default=columns[:num_columns])
 filtered_df = df[selected_columns]
 st.write("Filtered Data Preview:")
 st.dataframe(filtered_df)
@@ -74,11 +68,20 @@ st.subheader("Scatterplot Generator")
 numeric_columns = df.select_dtypes(include=['float64', 'int64']).columns.tolist()
 x_feature = st.selectbox("Select X-axis Feature", numeric_columns)
 y_feature = st.selectbox("Select Y-axis Feature", numeric_columns)
-plot_color = st.sidebar.color_picker("Choose Scatterplot Color", "#FF5733")
+scatter_color = st.sidebar.color_picker("Choose Scatterplot Color", "#FF5733")
 
 if st.button("Generate Scatterplot"):
     fig, ax = plt.subplots()
-    sns.scatterplot(x=x_feature, y=y_feature, data=df, color=plot_color, ax=ax)
+    sns.scatterplot(x=x_feature, y=y_feature, data=df, color=scatter_color, ax=ax)
+    st.pyplot(fig)
+
+# Histogram
+st.subheader("Histogram")
+if st.checkbox("Show Histogram"):
+    feature_histogram = st.selectbox("Select Feature for Histogram", numeric_columns)
+    hist_color = st.sidebar.color_picker("Choose Histogram Color", "#3498db")
+    fig, ax = plt.subplots()
+    sns.histplot(df[feature_histogram], bins=30, kde=True, color=hist_color, ax=ax)
     st.pyplot(fig)
 
 # Correlation Heatmap
@@ -96,11 +99,15 @@ if st.checkbox("Show Correlation Heatmap"):
         sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', ax=ax)
         st.pyplot(fig)
 
-# Histogram
-if st.checkbox("Show Histogram"):
-    feature_histogram = st.selectbox("Select Feature for Histogram", numeric_columns)
+# Boxplot
+st.subheader("Boxplot")
+feature_to_analyze = st.selectbox("Select Feature for Boxplot Analysis", columns)
+box_color = st.sidebar.color_picker("Choose Boxplot Color", "#2ecc71")
+
+if st.checkbox("Generate Boxplot"):
     fig, ax = plt.subplots()
-    sns.histplot(df[feature_histogram], bins=30, kde=True, ax=ax)
+    sns.boxplot(x=feature_to_analyze, y='price', data=df, color=box_color, ax=ax)
+    plt.xticks(rotation=45)
     st.pyplot(fig)
 
 # Grouping and Aggregation
@@ -133,18 +140,6 @@ if st.button("Calculate Pearson Correlation"):
         st.success("The correlation is statistically significant.")
     else:
         st.warning("The correlation is not statistically significant.")
-
-# Custom Plot - Price Analysis
-st.markdown("---")
-st.header("6. Custom Price Analysis")
-st.subheader("Explore Relationships with Price")
-feature_to_analyze = st.selectbox("Select Feature to Analyze Against Price", columns)
-
-if st.checkbox("Generate Boxplot"):
-    fig, ax = plt.subplots()
-    sns.boxplot(x=feature_to_analyze, y='price', data=df, ax=ax)
-    plt.xticks(rotation=45)
-    st.pyplot(fig)
 
 # Footer
 st.write("This app was created to explore the Automobile dataset interactively.")
