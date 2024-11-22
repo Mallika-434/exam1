@@ -86,18 +86,20 @@ if st.button("Generate Scatterplot"):
 
 # Histogram
 st.subheader("Analyze Spread: Histogram Viewer")
-if st.checkbox("Show Histogram"):
-    feature_histogram = st.selectbox("Select Feature for Histogram", numeric_columns)
-    hist_color = st.sidebar.color_picker("Choose Histogram Color", "#3498db")
+feature_histogram = st.selectbox("Select Feature for Histogram", numeric_columns)
+hist_color = st.sidebar.color_picker("Choose Histogram Color", "#3498db")
+
+if st.button("Generate Histogram"):
     fig, ax = plt.subplots()
     sns.histplot(df[feature_histogram], bins=30, kde=True, color=hist_color, ax=ax)
+    ax.set_title(f"Histogram of {feature_histogram}")
     st.pyplot(fig)
 
 # Pie Chart
 st.subheader("Visualize Distributions: Pie Chart")
 categorical_columns = df.select_dtypes(include=['object']).columns.tolist()
-
 selected_category = st.selectbox("Select Categorical Column for Pie Chart", categorical_columns)
+
 if st.button("Generate Pie Chart"):
     category_counts = df[selected_category].value_counts()
     fig, ax = plt.subplots()
@@ -107,28 +109,32 @@ if st.button("Generate Pie Chart"):
 
 # Correlation Heatmap
 st.subheader("Understanding Relationships: Heatmap")
-if st.checkbox("Show Correlation Heatmap"):
-    selected_corr_columns = st.multiselect(
-        "Select Columns for Correlation Heatmap",
-        numeric_columns,
-        default=numeric_columns[:5]
-    )
+selected_corr_columns = st.multiselect(
+    "Select Columns for Correlation Heatmap",
+    numeric_columns,
+    default=numeric_columns[:5]
+)
 
+if st.button("Generate Heatmap"):
     if selected_corr_columns:
         corr_matrix = df[selected_corr_columns].corr()
         fig, ax = plt.subplots(figsize=(10, 8))
         sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', ax=ax)
+        ax.set_title("Correlation Heatmap")
         st.pyplot(fig)
+    else:
+        st.warning("Please select at least one column for the heatmap.")
 
 # Boxplot
 st.subheader("Comparative Insights: Boxplots")
 feature_to_analyze = st.selectbox("Select Feature for Boxplot Analysis", columns)
 box_color = st.sidebar.color_picker("Choose Boxplot Color", "#2ecc71")
 
-if st.checkbox("Generate Boxplot"):
+if st.button("Generate Boxplot"):
     fig, ax = plt.subplots()
     sns.boxplot(x=feature_to_analyze, y='price', data=df, color=box_color, ax=ax)
     plt.xticks(rotation=90)
+    ax.set_title(f"Boxplot of {feature_to_analyze} vs Price")
     st.pyplot(fig)
 
 # Grouping and Aggregation
