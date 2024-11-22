@@ -3,10 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy import stats
-#from st_aggrid import AgGrid, GridOptionsBuilder
-
-# Configure Streamlit page layout
-st.set_page_config(page_title="Automobile Data Explorer", layout="wide")
 
 # Sidebar for configuration
 st.sidebar.header("Controls")
@@ -31,13 +27,7 @@ st.success("Data Loaded Successfully!")
 st.markdown("---")
 if st.checkbox("Show Dataset Overview"):
     st.subheader("Preview of Dataset")
-
-    # Slider for setting the number of rows to display
-    num_rows = st.slider("Number of rows to display", min_value=5, max_value=len(df), value=10)
-    styled_df = df.head(num_rows).style.set_precision(2)  # Limit rows and format numbers
-
-    # Display the table with dynamic container width
-    st.dataframe(styled_df, use_container_width=True)
+    st.dataframe(df.head())
 
     if st.checkbox("Show Basic Information", value=True):  # Checkbox for Basic Info
         st.subheader("Basic Information")
@@ -49,10 +39,6 @@ if st.checkbox("Show Dataset Overview"):
     if st.checkbox("Show Data Statistics"):
         st.subheader("Dataset Statistics")
         st.write(df.describe())
-
-if st.checkbox("Show Enhanced Table"):
-    st.subheader("Interactive Dataset View")
-    st.dataframe(df, use_container_width=True)
 
 # Filtering Dataset
 st.markdown("---")
