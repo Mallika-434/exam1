@@ -30,13 +30,15 @@ if st.checkbox("Show Dataset Overview"):
     st.subheader("Preview of Dataset")
     st.dataframe(df.head())
 
-    st.subheader("Basic Information")
-    st.write(f"Number of Rows: {df.shape[0]}")
-    st.write(f"Number of Columns: {df.shape[1]}")
-    st.write("Column Data Types:")
-    st.write(df.dtypes)
+    if st.checkbox("Show Basic Information", value=True):  # Checkbox for Basic Info
+        st.subheader("Basic Information")
+        st.write(f"Number of Rows: {df.shape[0]}")
+        st.write(f"Number of Columns: {df.shape[1]}")
+        st.write("Column Data Types:")
+        st.write(df.dtypes)
 
     if st.checkbox("Show Data Statistics"):
+        st.subheader("Dataset Statistics")
         st.write(df.describe())
 
 # Filtering Dataset
