@@ -93,6 +93,18 @@ if st.checkbox("Show Histogram"):
     sns.histplot(df[feature_histogram], bins=30, kde=True, color=hist_color, ax=ax)
     st.pyplot(fig)
 
+# Pie Chart
+st.subheader("Visualize Distributions: Pie Chart")
+categorical_columns = df.select_dtypes(include=['object']).columns.tolist()
+
+selected_category = st.selectbox("Select Categorical Column for Pie Chart", categorical_columns)
+if st.button("Generate Pie Chart"):
+    category_counts = df[selected_category].value_counts()
+    fig, ax = plt.subplots()
+    ax.pie(category_counts, labels=category_counts.index, autopct='%1.1f%%', startangle=90, colors=sns.color_palette("pastel"))
+    ax.set_title(f"Distribution of {selected_category}")
+    st.pyplot(fig)
+
 # Correlation Heatmap
 st.subheader("Understanding Relationships: Heatmap")
 if st.checkbox("Show Correlation Heatmap"):
@@ -117,19 +129,6 @@ if st.checkbox("Generate Boxplot"):
     fig, ax = plt.subplots()
     sns.boxplot(x=feature_to_analyze, y='price', data=df, color=box_color, ax=ax)
     plt.xticks(rotation=90)
-    st.pyplot(fig)
-
-# Pie Chart
-st.markdown("---")
-st.header("Visualize Distributions: Pie Chart")
-categorical_columns = df.select_dtypes(include=['object']).columns.tolist()
-
-selected_category = st.selectbox("Select Categorical Column for Pie Chart", categorical_columns)
-if st.button("Generate Pie Chart"):
-    category_counts = df[selected_category].value_counts()
-    fig, ax = plt.subplots()
-    ax.pie(category_counts, labels=category_counts.index, autopct='%1.1f%%', startangle=90, colors=sns.color_palette("pastel"))
-    ax.set_title(f"Distribution of {selected_category}")
     st.pyplot(fig)
 
 # Grouping and Aggregation
