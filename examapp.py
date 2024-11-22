@@ -46,14 +46,14 @@ st.header("Custom Data Selection")
 columns = df.columns.tolist()
 
 # Sliding option to set the maximum number of columns to view
-num_columns = st.slider("Set the maximum number of columns to view", min_value=1, max_value=len(columns), value=5)
+num_columns = st.slider("Set the maximum number of columns to view", min_value=1, max_value=len(columns), value=3)
 
 # Multi-select with restriction
 selected_columns = st.multiselect("Select Columns to View (Max: {} columns)".format(num_columns), columns)
 
 # Logic to restrict column selection
 if len(selected_columns) > num_columns:
-    st.warning(f"You can only select up to {num_columns} columns. Extra columns will not be added.")
+    st.toast("You can only select up to {} columns. Extra columns will not be added.".format(num_columns), icon="⚠️", duration=3)
     selected_columns = selected_columns[:num_columns]  # Truncate to allowed columns
 
 # Display Filtered Data
