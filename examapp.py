@@ -8,8 +8,8 @@ from scipy import stats
 st.sidebar.header("Controls")
 
 # Title and App Info
-st.title("Interactive EDA App - Automobile Dataset")
-st.image("https://your-image-url.com/banner.png", use_column_width=True)
+st.title("Automobile Data Explorer")
+#st.image("https://your-image-url.com/banner.png", use_column_width=True)
 st.write("This app allows you to explore and visualize the Automobile dataset interactively.")
 
 # Load Dataset
