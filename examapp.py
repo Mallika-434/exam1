@@ -13,7 +13,7 @@ st.title("Automobile Data Explorer")
 st.write("This app allows you to explore and visualize the Automobile dataset interactively.")
 
 # Load Dataset
-st.header("1. Load Dataset")
+st.header("Fueling Your Analysis: Data Upload")
 path = 'https://raw.githubusercontent.com/klamsal/Fall2024Exam/refs/heads/main/CleanedAutomobile.csv'
 
 @st.cache_data
@@ -41,7 +41,7 @@ if st.checkbox("Show Dataset Overview"):
 
 # Filtering Dataset
 st.markdown("---")
-st.header("2. Filter Dataset")
+st.header("Custom Data Selection")
 columns = df.columns.tolist()
 
 # Sliding option to set the number of columns to view
@@ -67,10 +67,10 @@ st.download_button(
 
 # Interactive Visualizations
 st.markdown("---")
-st.header("3. Interactive Visualizations")
+st.header("Discover Patterns: Interactive Visualizations")
 
 # Scatterplot Generator
-st.subheader("Scatterplot Generator")
+st.subheader("Uncover Relationships: Scatterplot Generator")
 numeric_columns = df.select_dtypes(include=['float64', 'int64']).columns.tolist()
 x_feature = st.selectbox("Select X-axis Feature", numeric_columns)
 y_feature = st.selectbox("Select Y-axis Feature", numeric_columns)
@@ -82,7 +82,7 @@ if st.button("Generate Scatterplot"):
     st.pyplot(fig)
 
 # Histogram
-st.subheader("Histogram")
+st.subheader("Analyze Spread: Histogram Viewer")
 if st.checkbox("Show Histogram"):
     feature_histogram = st.selectbox("Select Feature for Histogram", numeric_columns)
     hist_color = st.sidebar.color_picker("Choose Histogram Color", "#3498db")
@@ -91,7 +91,7 @@ if st.checkbox("Show Histogram"):
     st.pyplot(fig)
 
 # Correlation Heatmap
-st.subheader("Correlation Heatmap")
+st.subheader("Understanding Relationships: Heatmap")
 if st.checkbox("Show Correlation Heatmap"):
     selected_corr_columns = st.multiselect(
         "Select Columns for Correlation Heatmap",
@@ -106,7 +106,7 @@ if st.checkbox("Show Correlation Heatmap"):
         st.pyplot(fig)
 
 # Boxplot
-st.subheader("Boxplot")
+st.subheader("Comparative Insights: Boxplots")
 feature_to_analyze = st.selectbox("Select Feature for Boxplot Analysis", columns)
 box_color = st.sidebar.color_picker("Choose Boxplot Color", "#2ecc71")
 
@@ -118,7 +118,7 @@ if st.checkbox("Generate Boxplot"):
 
 # Grouping and Aggregation
 st.markdown("---")
-st.header("4. Grouping and Aggregation")
+st.header("Summarizing Key Metrics")
 group_column = st.selectbox("Select Categorical Column for Grouping", df.select_dtypes(include=['object']).columns)
 agg_column = st.selectbox("Select Numeric Column for Aggregation", numeric_columns)
 
@@ -134,7 +134,7 @@ if st.button("Show Grouped Data"):
 
 # Statistical Analysis
 st.markdown("---")
-st.header("5. Statistical Analysis")
+st.header("Quantify Relationships: Statistical Analysis")
 analysis_feature = st.selectbox("Select a Feature for Correlation with Price", numeric_columns)
 
 if st.button("Calculate Pearson Correlation"):
@@ -148,4 +148,4 @@ if st.button("Calculate Pearson Correlation"):
         st.warning("The correlation is not statistically significant.")
 
 # Footer
-st.write("This app was created to explore the Automobile dataset interactively.")
+st.write("Your Automobile Data Analysis Journey Ends Here.")
