@@ -51,18 +51,20 @@ num_columns = st.slider("Set the maximum number of columns to view", min_value=1
 
 # Multi-select with restriction
 selected_columns = st.multiselect("Select Columns to View (Max: {} columns)".format(num_columns), columns)
+
+# Warning for excess columns
 if len(selected_columns) > num_columns:
     st.warning(f"You can only select up to {num_columns} columns. Excess columns will not be included.")
-    selected_columns = selected_columns[:num_columns]
+    selected_columns = selected_columns[:num_columns]  # Truncate the selection
 
-filtered_df = df[selected_columns]
+# Display Filtered Data
 st.write("Filtered Data Preview:")
-st.dataframe(filtered_df)
+st.dataframe(df[selected_columns])
 
 # Download Filtered Data
 st.download_button(
     label="Download Filtered Data as CSV",
-    data=filtered_df.to_csv(index=False),
+    data=df[selected_columns].to_csv(index=False),
     file_name='filtered_data.csv',
     mime='text/csv'
 )
