@@ -113,7 +113,7 @@ box_color = st.sidebar.color_picker("Choose Boxplot Color", "#2ecc71")
 if st.checkbox("Generate Boxplot"):
     fig, ax = plt.subplots()
     sns.boxplot(x=feature_to_analyze, y='price', data=df, color=box_color, ax=ax)
-    plt.xticks(rotation=45)
+    plt.xticks(rotation=90)
     st.pyplot(fig)
 
 # Grouping and Aggregation
