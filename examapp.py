@@ -5,9 +5,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy import stats
 
-# Install required packages if running locally
-# pip install matplotlib seaborn scipy pandas numpy
-
 # Theme Customization: Adjust via ~/.streamlit/config.toml
 # Example:
 # [theme]
@@ -21,7 +18,7 @@ st.sidebar.header("Controls")
 
 # Title and App Info
 st.title("Interactive EDA App - Automobile Dataset")
-st.image("https://your-image-url.com/banner.png", use_column_width=True)
+#st.image("https://your-image-url.com/banner.png", use_column_width=True)
 st.write("This app allows you to explore and visualize the Automobile dataset interactively.")
 
 # Load Dataset
