@@ -43,21 +43,24 @@ if st.checkbox("Show Dataset Overview"):
 
 # Filtering Dataset
 st.markdown("---")
-st.header("Custom Data Selection")
+st.header("2. Filter Dataset")
 columns = df.columns.tolist()
 
-# Sliding option to set the number of columns to view
+# Sliding option to set the maximum number of columns to view
 num_columns = st.slider("Set the maximum number of columns to view", min_value=1, max_value=len(columns), value=5)
 
-# Multi-select with restriction
+# Multi-select for columns with restriction
 selected_columns = st.multiselect("Select Columns to View (Max: {} columns)".format(num_columns), columns)
+
+# Check and display warning if more columns are selected
 if len(selected_columns) > num_columns:
     st.warning(f"You can only select up to {num_columns} columns. Excess columns will not be included.")
     selected_columns = selected_columns[:num_columns]
 
-filtered_df = df[selected_columns]
+# Display filtered data
 st.write("Filtered Data Preview:")
-st.dataframe(filtered_df)
+st.dataframe(df[selected_columns])
+
 
 # Download Filtered Data
 st.download_button(
@@ -131,7 +134,7 @@ if st.button("Show Grouped Data"):
     st.subheader(f"Bar Chart of {agg_column} Grouped by {group_column}")
     fig, ax = plt.subplots()
     sns.barplot(x=group_column, y=agg_column, data=grouped_data, ax=ax)
-    plt.xticks(rotation=45)
+    plt.xticks(rotation=90)
     st.pyplot(fig)
 
 # Statistical Analysis
