@@ -5,80 +5,118 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy import stats
 
-# Title and Introduction
-st.title("Interactive Data Analysis App")
-st.markdown("""
-Welcome to the **Interactive Data Analysis App**! 
-This tool allows you to upload your dataset, explore it, and generate insightful visualizations and analyses.
-""")
+# Title and App Info
+st.title("Interactive EDA App - Automobile Dataset")
+st.write("This app allows you to explore and visualize the Automobile dataset interactively.")
 
-# File Upload Section
-uploaded_file = st.file_uploader("Upload your data file (CSV format)", type=["csv"])
-if uploaded_file is not None:
-    # Load the data
-    df = pd.read_csv(uploaded_file)
-    st.subheader("Data Preview")
-    st.write(df.head())
+# Load Dataset
+st.header("1. Load Dataset")
+path = 'https://raw.githubusercontent.com/klamsal/Fall2024Exam/refs/heads/main/CleanedAutomobile.csv'
 
-    # Basic Dataset Information
-    st.subheader("Dataset Information")
-    st.write("**Shape of the dataset:**", df.shape)
-    st.write("**Data types:**")
+@st.cache_data
+def load_data():
+    df = pd.read_csv(path)
+    # Convert numeric columns to float, handling non-numeric values
+    numeric_columns = ['normalized-losses', 'wheel-base', 'length', 'width', 'height', 
+                      'curb-weight', 'engine-size', 'bore', 'stroke', 'compression-ratio', 
+                      'horsepower', 'peak-rpm', 'city-mpg', 'highway-mpg', 'price']
+    for col in numeric_columns:
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+    return df
+
+df = load_data()
+
+# Dataset Overview
+if st.checkbox("Show Dataset Overview"):
+    st.subheader("Preview of Dataset")
+    st.dataframe(df.head())
+    
+    st.subheader("Basic Information")
+    st.write(f"Number of Rows: {df.shape[0]}")
+    st.write(f"Number of Columns: {df.shape[1]}")
+    st.write("Column Data Types:")
     st.write(df.dtypes)
 
-    # Show basic statistics
-    st.subheader("Basic Statistics")
-    st.write(df.describe())
+# Filtering Dataset
+st.header("2. Filter Dataset")
+columns = df.columns.tolist()
+selected_columns = st.multiselect("Select Columns to View", columns, default=columns[:5])
+filtered_df = df[selected_columns]
+st.write("Filtered Data Preview:")
+st.dataframe(filtered_df)
 
-    # Allow user to select columns for further analysis
-    st.subheader("Select Columns for Analysis")
-    columns = df.columns.tolist()
-    selected_columns = st.multiselect("Select the columns you want to analyze:", columns)
+# Interactive Visualizations
+st.header("3. Interactive Visualizations")
+numeric_columns = df.select_dtypes(include=['float64', 'int64']).columns.tolist()
 
-    if selected_columns:
-        st.write(f"You selected: {', '.join(selected_columns)}")
-        selected_data = df[selected_columns]
+if numeric_columns:
+    st.subheader("Scatterplot Generator")
+    x_feature = st.selectbox("Select X-axis Feature", numeric_columns)
+    y_feature = st.selectbox("Select Y-axis Feature", numeric_columns)
 
-        # Correlation Heatmap
-        st.subheader("Correlation Heatmap")
-        fig, ax = plt.subplots(figsize=(10, 6))
-        sns.heatmap(selected_data.corr(), annot=True, fmt=".2f", cmap="coolwarm", ax=ax)
+    if st.button("Generate Scatterplot"):
+        fig, ax = plt.subplots()
+        sns.regplot(data=df, x=x_feature, y=y_feature, ax=ax)
+        plt.title(f"{x_feature} vs {y_feature}")
         st.pyplot(fig)
+        plt.close()
 
-        # Univariate Analysis
-        st.subheader("Univariate Analysis")
-        col_to_analyze = st.selectbox("Select a column for distribution plot:", selected_columns)
-        if col_to_analyze:
-            fig, ax = plt.subplots()
-            sns.histplot(selected_data[col_to_analyze], kde=True, ax=ax, color="skyblue")
-            ax.set_title(f"Distribution of {col_to_analyze}")
+    # Correlation Heatmap
+    st.subheader("Correlation Heatmap")
+    if st.checkbox("Show Correlation Heatmap"):
+        selected_corr_columns = st.multiselect(
+            "Select Columns for Correlation Heatmap",
+            numeric_columns,
+            default=numeric_columns[:5]
+        )
+        
+        if selected_corr_columns:
+            corr_matrix = df[selected_corr_columns].corr()
+            fig, ax = plt.subplots(figsize=(10, 8))
+            sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt='.2f', ax=ax)
+            plt.title("Correlation Heatmap")
             st.pyplot(fig)
+            plt.close()
 
-        # Boxplot for Outlier Detection
-        st.subheader("Boxplot for Outliers")
-        col_to_boxplot = st.selectbox("Select a column for boxplot:", selected_columns)
-        if col_to_boxplot:
-            fig, ax = plt.subplots()
-            sns.boxplot(x=selected_data[col_to_boxplot], ax=ax, color="lightgreen")
-            ax.set_title(f"Boxplot of {col_to_boxplot}")
-            st.pyplot(fig)
+# Grouping and Aggregation
+st.header("4. Grouping and Aggregation")
+categorical_columns = df.select_dtypes(include=['object']).columns
+if len(categorical_columns) > 0:
+    group_column = st.selectbox("Select Categorical Column for Grouping", categorical_columns)
+    agg_column = st.selectbox("Select Numeric Column for Aggregation", numeric_columns)
 
-        # Hypothesis Testing
-        st.subheader("Hypothesis Testing")
-        st.markdown("### Perform a t-test between two numerical columns")
-        numerical_columns = selected_data.select_dtypes(include=np.number).columns.tolist()
-        if len(numerical_columns) >= 2:
-            col1, col2 = st.selectbox("Select first column:", numerical_columns), st.selectbox("Select second column:", numerical_columns)
-            if col1 != col2:
-                t_stat, p_val = stats.ttest_ind(selected_data[col1], selected_data[col2], nan_policy='omit')
-                st.write(f"T-Statistic: {t_stat:.4f}, P-Value: {p_val:.4f}")
-                if p_val < 0.05:
-                    st.success("The result is statistically significant (p < 0.05).")
-                else:
-                    st.info("The result is not statistically significant (p >= 0.05).")
+    if st.button("Show Grouped Data"):
+        grouped_data = df.groupby(group_column)[agg_column].mean().reset_index()
+        st.write(grouped_data)
 
-    else:
-        st.warning("Please select at least one column for analysis.")
+        fig, ax = plt.subplots(figsize=(10, 6))
+        sns.barplot(data=grouped_data, x=group_column, y=agg_column, ax=ax)
+        plt.xticks(rotation=45)
+        plt.title(f"Average {agg_column} by {group_column}")
+        st.pyplot(fig)
+        plt.close()
 
-else:
-    st.warning("Please upload a CSV file to proceed.")
+# Statistical Analysis
+st.header("5. Statistical Analysis")
+if 'price' in numeric_columns:
+    analysis_feature = st.selectbox("Select a Feature for Correlation with Price", 
+                                  [col for col in numeric_columns if col != 'price'])
+
+    if st.button("Calculate Pearson Correlation"):
+        valid_data = df[[analysis_feature, 'price']].dropna()
+        if len(valid_data) > 0:
+            pearson_coef, p_value = stats.pearsonr(valid_data[analysis_feature], 
+                                                 valid_data['price'])
+            st.write(f"**Selected Feature:** {analysis_feature}")
+            st.write(f"**Pearson Correlation Coefficient:** {pearson_coef:.3f}")
+            st.write(f"**P-value:** {p_value:.3e}")
+            if p_value < 0.05:
+                st.success("The correlation is statistically significant.")
+            else:
+                st.warning("The correlation is not statistically significant.")
+        else:
+            st.error("Not enough valid data points for correlation analysis.")
+
+# Footer
+st.write("---")
+st.write("This app was created to explore the Automobile dataset interactively.")
