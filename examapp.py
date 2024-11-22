@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy import stats
-from st_aggrid import AgGrid, GridOptionsBuilder
+#from st_aggrid import AgGrid, GridOptionsBuilder
 
 # Configure Streamlit page layout
 st.set_page_config(page_title="Automobile Data Explorer", layout="wide")
@@ -50,23 +50,9 @@ if st.checkbox("Show Dataset Overview"):
         st.subheader("Dataset Statistics")
         st.write(df.describe())
 
-# Enhanced Table with AgGrid
 if st.checkbox("Show Enhanced Table"):
     st.subheader("Interactive Dataset View")
-
-    # Configure AgGrid options
-    grid_options = GridOptionsBuilder.from_dataframe(df)
-    grid_options.configure_pagination(paginationAutoPageSize=True)  # Enable Pagination
-    grid_options.configure_side_bar()  # Enable Sidebar Filters
-    grid_options.configure_default_column(resizable=True, sortable=True, filter=True)
-
-    # Display AgGrid table
-    AgGrid(
-        df,
-        gridOptions=grid_options.build(),
-        height=400,  # Adjust height dynamically if needed
-        fit_columns_on_grid_load=True,
-    )
+    st.dataframe(df, use_container_width=True)
 
 # Filtering Dataset
 st.markdown("---")
