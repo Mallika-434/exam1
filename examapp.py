@@ -53,7 +53,7 @@ selected_columns = st.multiselect("Select Columns to View (Max: {} columns)".for
 
 # Logic to restrict column selection
 if len(selected_columns) > num_columns:
-    st.toast("You can only select up to {} columns. Extra columns will not be added.".format(num_columns), icon="⚠️", duration=3)
+    st.toast("You can only select up to {} columns. Extra columns will not be added.".format(num_columns), icon="⚠️")
     selected_columns = selected_columns[:num_columns]  # Truncate to allowed columns
 
 # Display Filtered Data
